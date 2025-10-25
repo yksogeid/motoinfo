@@ -36,6 +36,10 @@ class RoleSeeder extends Seeder
 
         // Crear usuarios de prueba
         $admin = User::create([
+            'documento' => 123,
+            'fechanacimiento' => '2000-01-01',
+            'pais' => 'Colombia',
+            'ciudad' => 'Bogota',
             'name' => 'Admin User',
             'email' => 'admin@example.com',
             'password' => bcrypt('password'),
@@ -43,6 +47,10 @@ class RoleSeeder extends Seeder
         $admin->assignRole('admin');
 
         $editor = User::create([
+            'documento' => 12345,
+            'fechanacimiento' => '2000-01-01',
+            'pais' => 'Colombia',
+            'ciudad' => 'Bogota',
             'name' => 'Editor User',
             'email' => 'editor@example.com',
             'password' => bcrypt('password'),
@@ -50,6 +58,10 @@ class RoleSeeder extends Seeder
         $editor->assignRole('editor');
 
         $user = User::create([
+            'documento' => 1234567,
+            'fechanacimiento' => '2000-01-01',
+            'pais' => 'Colombia',
+            'ciudad' => 'Bogota',
             'name' => 'Regular User',
             'email' => 'user@example.com',
             'password' => bcrypt('password'),

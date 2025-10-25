@@ -6,6 +6,7 @@ use App\Http\Controllers\Editor\DashboardController as EditorDashboard;
 use App\Http\Controllers\User\DashboardController as UserDashboard;
 use App\Http\Controllers\User\MotoController as UserMoto;
 use App\Http\Controllers\User\UsVehiculoController as UserVehiculoController;
+use App\Http\Controllers\User\DocumentoVehiculoController as DocumentoVehiculoController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -47,6 +48,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/vehiculos/{id}', [UserVehiculoController::class, 'show'])->name('user.vehiculos.show');
     Route::put('/vehiculos/{id}', [UserVehiculoController::class, 'update'])->name('user.vehiculos.update');
     Route::delete('/vehiculos/{id}', [UserVehiculoController::class, 'destroy'])->name('user.vehiculos.destroy');
+
+    // 🏍️ CRUD de documentos de vehículos
+    Route::get('/documentos-vehiculos/{vehiculo_id}', [DocumentoVehiculoController::class, 'index'])->name('user.documentos-vehiculos.index');
     });
 });
 

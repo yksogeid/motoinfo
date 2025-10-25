@@ -59,23 +59,24 @@ public function index()
         return response()->json($userVehiculo);
     }
 
-    /**
-     * Actualizar una relación existente.
-     */
-    public function update(Request $request, $id)
-    {
-        $request->validate([
-            'estado' => 'boolean',
-        ]);
+   /**
+ * Actualizar una relación existente.
+ */
+public function update(Request $request, $id)
+{
+    $request->validate([
+        'estado' => 'boolean',
+    ]);
 
-        $userVehiculo = userVehiculoModel::findOrFail($id);
-        $userVehiculo->update($request->only('estado'));
+    $userVehiculo = userVehiculoModel::findOrFail($id);
+    $userVehiculo->update($request->only('estado'));
 
-        return response()->json([
-            'message' => 'Estado actualizado correctamente',
-            'data' => $userVehiculo
-        ]);
-    }
+    // Redirige con mensaje de éxito
+    return redirect()
+        ->route('user.dashboard')
+        ->with('success', 'El estado se actualizo correctamente.');
+}
+
 
     /**
      * Eliminar una relación usuario-vehículo.
@@ -85,6 +86,8 @@ public function index()
         $userVehiculo = userVehiculoModel::findOrFail($id);
         $userVehiculo->delete();
 
-        return response()->json(['message' => 'Relación eliminada correctamente']);
+         return redirect()
+        ->route('user.vehiculos.index')
+        ->with('success', 'La relación se elimino correctamente.');
     }
 }

@@ -1,6 +1,38 @@
 @extends('layouts.app')
 
 @section('content')
+@if (session('success'))
+    <!-- Modal pequeño flotante -->
+    <div id="successModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50 animate-fadeIn">
+        <div class="relative bg-white rounded-2xl shadow-lg p-6 max-w-sm w-full text-center transform transition-all scale-100">
+            <!-- Botón de cerrar -->
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">✅ ¡Actualización exitosa!</h3>
+            <p class="text-gray-600">{{ session('success') }}</p>
+
+            <button type="button" class="mt-6 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onclick="cerrarModal()">ACEPTAR</button>
+
+        </div>
+    </div>
+
+    <script>
+        // Oculta el modal automáticamente después de 2.5 segundos
+        setTimeout(() => {
+            cerrarModal();
+        }, 2500);
+
+        function cerrarModal() {
+            const modal = document.getElementById('successModal');
+            if (modal) {
+                modal.classList.add('opacity-0', 'scale-90');
+                setTimeout(() => modal.remove(), 300);
+            }
+        }
+    </script>
+@endif
+
+
+
+
 <div class="max-w-6xl mx-auto py-8 px-4">
 
     <h1 class="text-3xl font-bold text-gray-700 mb-6">Mis Vehículos</h1>
