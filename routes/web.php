@@ -7,6 +7,7 @@ use App\Http\Controllers\User\DashboardController as UserDashboard;
 use App\Http\Controllers\User\MotoController as UserMoto;
 use App\Http\Controllers\User\UsVehiculoController as UserVehiculoController;
 use App\Http\Controllers\User\DocumentoVehiculoController as DocumentoVehiculoController;
+use App\Http\Controllers\User\vehiculoController as vehiculoController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -43,9 +44,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 
           // 🏍️ CRUD de relaciones usuario-vehículo
-    Route::get('/vehiculos', [UserVehiculoController::class, 'index'])->name('user.vehiculos.index');
-    Route::post('/vehiculos', [UserVehiculoController::class, 'store'])->name('user.vehiculos.store');
-    Route::get('/vehiculos/{id}', [UserVehiculoController::class, 'show'])->name('user.vehiculos.show');
+    //Route::get('/vehiculos', [UserVehiculoController::class, 'index'])->name('user.vehiculos.index');
+    Route::get('/dashboard/crearVehiculo', [UserVehiculoController::class, 'create'])->name('vehiculos.create');
+    Route::post('/vehiculos', [UserVehiculoController::class, 'store'])->name('vehiculos.store');
+    //Route::post('/vehiculos', [UserVehiculoController::class, 'store'])->name('user.vehiculos.store');
+    //Route::get('/vehiculos/{id}', [UserVehiculoController::class, 'show'])->name('user.vehiculos.show');
+
     Route::put('/vehiculos/{id}', [UserVehiculoController::class, 'update'])->name('user.vehiculos.update');
     Route::delete('/vehiculos/{id}', [UserVehiculoController::class, 'destroy'])->name('user.vehiculos.destroy');
 

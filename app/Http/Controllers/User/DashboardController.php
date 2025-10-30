@@ -6,6 +6,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\UserVehiculoModel;
+use App\Models\marcaModel;
+use App\Models\lineaComercialModel;
+use App\Models\colorModel;
+use App\Models\tipoModel;
 
 class DashboardController extends Controller
 {
@@ -16,10 +20,19 @@ class DashboardController extends Controller
             ->where('user_id', $user->id)
             ->get();
         $totalVehiculos = $userVehiculos->count();
-           return view('user.dashboard', [
+        $marcas = marcaModel::all();
+        $lineas = lineaComercialModel::all();
+        $colores = colorModel::all();
+        $tipos = tipoModel::all();
+
+        return view('user.dashboard', [
         'userVehiculos' => $userVehiculos,
         'userLogueado' => $user,
         'totalVehiculos' => $totalVehiculos,
+        'marcas'=> $marcas,
+        'lineas'=> $lineas,
+        'colores'=> $colores,
+        'tipos'=> $tipos
     ]);
     }
 }
