@@ -13,11 +13,15 @@ return new class extends Migration
     {
         Schema::create('mantenimiento', function (Blueprint $table) {
             $table->id();
-            $table->String('idVehiculo');
+            $table->foreign("idVehiculo")->references("id")->on("vehiculo")->onDelete("cascade");
+            $table->unsignedBigInteger("idVehiculo");
             $table->String('observacion');
-            $table->String('idEstado');
-            $table->String('idAsesor');
-            $table->String('idMecanico');
+            $table->foreign("idEstado")->references("id")->on("estado")->onDelete("cascade");
+            $table->unsignedBigInteger("idEstado");
+            $table->foreign("idAsesor")->references("id")->on("users")->onDelete("cascade");
+            $table->unsignedBigInteger("idAsesor");
+            $table->foreign("idMecanico")->references("id")->on("users")->onDelete("cascade");
+            $table->unsignedBigInteger("idMecanico");
             $table->timestamps();
         });
     }
