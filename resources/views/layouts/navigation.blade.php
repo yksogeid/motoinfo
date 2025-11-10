@@ -23,6 +23,9 @@
                         <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')" class="dark:text-gray-200">
                             {{ __('Panel Admin') }}
                         </x-nav-link>
+                        <x-nav-link :href="route('admin.roles.index')" :active="request()->routeIs('admin.roles.index')" class="dark:text-gray-200">
+                            {{ __('Gestionar Roles') }}
+                        </x-nav-link>
                     @endrole
                     @role('editor')
                         <x-nav-link :href="route('editor.dashboard')" :active="request()->routeIs('editor.dashboard')" class="dark:text-gray-200">

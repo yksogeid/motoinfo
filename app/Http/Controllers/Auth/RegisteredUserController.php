@@ -31,15 +31,26 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'documento' => ['required', 'string', 'max:255'],
+            'fechanacimiento' => ['required', 'date'],
+            'pais' => ['required', 'string', 'max:255'],
+            'ciudad' => ['required', 'string', 'max:255'],
         ]);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'documento' => $request->documento,
+            'fechanacimiento' => $request->fechanacimiento,
+            'pais' => $request->pais,
+            'ciudad' => $request->ciudad,
         ]);
+
+        // Asignar rol de user por defecto
+        $user->assignRole('user');
 
         event(new Registered($user));
 
