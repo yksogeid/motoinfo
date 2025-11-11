@@ -48,85 +48,94 @@ class UsVehiculoController extends Controller
      * Guardar un nuevo vehículo.
      */
     public function store(Request $request)
-    {
-        // Validaciones
-        $request->validate([
-            'nombre' => 'required|string|max:100',
-            'marca_id' => 'required|exists:marca,id',
-            'linea_id' => 'required|exists:lineacomercial,id',
-            'color_id' => 'required|exists:color,id',
-            'tipo_id' => 'required|exists:tipo,id',
-            'cilindraje' => 'required|numeric',
-            'modelo' => 'required|integer',
-            'combustible' => 'required|string|max:50',
-            'numeropasajero' => 'required|integer',
-            'placa' => 'required|string|max:10|unique:vehiculo,placa',
-            'tipoDocumento_id' => 'required|exists:tipodocumento,id',
-            'documento' => 'required|file|mimes:pdf,jpg,jpeg|max:5120', // obligatorio ahora
-        ]);
-
-        // Crear vehículo
-        $vehiculo = vehiculoModel::create($request->only([
-            'nombre',
-            'marca_id',
-            'linea_id',
-            'color_id',
-            'tipo_id',
-            'cilindraje',
-            'modelo',
-            'combustible',
-            'numeropasajero',
-            'placa'
-        ]));
-
-        // Asociar vehículo al usuario
-        $user = Auth::user();
-
-        UserVehiculoModel::create([
-            'user_id' => $user->id,
-            'vehiculo_id' => $vehiculo->id,
-            'estado' => 1,
-        ]);
-
-      if ($request->hasFile('documento')) {
-    $user = Auth::user(); // Obtener usuario actual
-    $archivo = $request->file('documento');
-
-    // Obtener extensión original del archivo
-    $extension = $archivo->getClientOriginalExtension();
-
-    $tipoDocumento = tipoDocumentoModel::find($request->tipoDocumento_id);
-
-
-    // Crear nombre personalizado
-    $nombreArchivo = $user->documento . '-'.$tipoDocumento->nombre  .'.'.$extension;
-
-    // Guardar archivo en storage/app/public/documentos con nombre personalizado
-    $path = $archivo->storeAs('documentos', $nombreArchivo, 'public');
-
-    // Generar URL pública
-    $urlPublica = asset('storage/' . $path);
-
-    // Guardar en el modelo
-    documentoVehiculoModel::create([
-        'vehiculo_id' => $vehiculo->id,
-        'tipo_documento_id' => $request->tipoDocumento_id,
-        'urlArchivo' => $urlPublica, // ahora es accesible desde el navegador
-        'fechaSubida' => now(),
-        'id_estado_validacion' => 1,
+{
+    // ✅ Validaciones del formulario
+    $request->validate([
+        'nombre' => 'required|string|max:100',
+        'marca_id' => 'required|exists:marca,id',
+        'linea_id' => 'required|exists:lineacomercial,id',
+        'color_id' => 'required|exists:color,id',
+        'tipo_id' => 'required|exists:tipo,id',
+        'cilindraje' => 'required|numeric',
+        'modelo' => 'required|integer',
+        'combustible' => 'required|string|max:50',
+        'numeropasajero' => 'required|integer',
+        'placa' => 'required|string|max:10|unique:vehiculo,placa',
+        'tipoDocumento_id' => 'required|exists:tipodocumento,id',
+        'documento' => 'required|file|mimes:pdf,jpg,jpeg|max:5120', // 5 MB máx
     ]);
-}
 
+    // ✅ Crear vehículo
+    $vehiculo = vehiculoModel::create($request->only([
+        'nombre',
+        'marca_id',
+        'linea_id',
+        'color_id',
+        'tipo_id',
+        'cilindraje',
+        'modelo',
+        'combustible',
+        'numeropasajero',
+        'placa'
+    ]));
 
+    // ✅ Asociar vehículo al usuario autenticado
+    $user = Auth::user();
 
-        return redirect()
-            ->route('user.dashboard')
-            ->with([
-                'success' => 'Se ha creado el vehículo exitosamente.',
-                'titulo' => 'Creación exitosa'
+    UserVehiculoModel::create([
+        'user_id' => $user->id,
+        'vehiculo_id' => $vehiculo->id,
+        'estado' => 1,
+    ]);
+
+    // ✅ Guardar documento asociado
+    if ($request->hasFile('documento')) {
+        $archivo = $request->file('documento');
+        $tipoDocumento = tipoDocumentoModel::findOrFail($request->tipoDocumento_id);
+
+        // Obtener extensión del archivo
+        $extension = $archivo->getClientOriginalExtension();
+
+        // Nombre de archivo seguro (sin caracteres raros)
+        $nombreArchivo = preg_replace(
+            '/[^A-Za-z0-9_\-]/',
+            '_',
+            $user->documento . '-' . $tipoDocumento->nombre
+        ) . '.' . $extension;
+
+        try {
+            // Guardar archivo en storage/app/public/documentos
+            $path = $archivo->storeAs('documentos', $nombreArchivo, 'public');
+
+            // Generar URL pública accesible
+            $urlPublica = asset('storage/' . $path);
+
+            // Guardar registro en la tabla documentoVehiculo
+            documentoVehiculoModel::create([
+                'vehiculo_id' => $vehiculo->id,
+                'tipo_documento_id' => $request->tipoDocumento_id,
+                'urlArchivo' => $urlPublica,
+                'fechaSubida' => now(),
+                'id_estado_validacion' => 1,
             ]);
+        } catch (\Exception $e) {
+            // En caso de error, eliminar el vehículo recién creado para evitar datos huérfanos
+            $vehiculo->delete();
+            return redirect()
+                ->back()
+                ->withErrors(['documento' => 'Error al subir el archivo: ' . $e->getMessage()])
+                ->withInput();
+        }
     }
 
+    // ✅ Redirigir con mensaje de éxito
+    return redirect()
+        ->route('user.dashboard')
+        ->with([
+            'success' => 'Se ha creado el vehículo y el documento se ha cargado correctamente.',
+            'titulo' => 'Creación exitosa'
+        ]);
+}
 
     /**
      * Mostrar una relación específica.

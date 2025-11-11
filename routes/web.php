@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\Editor\DashboardController as EditorDashboard;
 use App\Http\Controllers\User\DashboardController as UserDashboard;
+use App\Http\Controllers\Mecanico\DashboardController  as MecanicoDashboard;
 use App\Http\Controllers\User\MotoController as UserMoto;
 use App\Http\Controllers\User\UsVehiculoController as UserVehiculoController;
 use App\Http\Controllers\User\DocumentoVehiculoController as DocumentoVehiculoController;
@@ -20,8 +21,8 @@ Route::get('/', function () {
 Route::get('/dashboard', function () {
     if (auth()->user()->hasRole('admin')) {
         return redirect()->route('admin.dashboard');
-    } elseif (auth()->user()->hasRole('editor')) {
-        return redirect()->route('editor.dashboard');
+    } elseif (auth()->user()->hasRole('mecanico')) {
+        return redirect()->route('mecanico.dashboard');
     } else {
         return redirect()->route('user.dashboard');
     }
@@ -43,6 +44,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::middleware(['role:editor'])->prefix('editor')->group(function () {
         Route::get('/dashboard', [EditorDashboard::class, 'index'])->name('editor.dashboard');
     });
+    // Rutas de mecanico
+     Route::middleware(['role:mecanico'])->prefix('mecanico')->group(function () {
+        Route::get('/dashboard', [MecanicoDashboard::class, 'index'])->name('mecanico.dashboard');
+    });
 
     // Rutas de Usuario normal
     Route::middleware(['role:user'])->prefix('user')->group(function () {
@@ -53,6 +58,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // 🏍️ CRUD de relaciones usuario-vehículo
         //Route::get('/vehiculos', [UserVehiculoController::class, 'index'])->name('user.vehiculos.index');
         Route::get('/dashboard/crearVehiculo', [UserVehiculoController::class, 'create'])->name('vehiculos.create');
+        Route::post('/vehiculo/{idVehiculo}/documentos/subir', [DocumentoVehiculoController::class, 'subir'])->name('documentos.subir');
         Route::post('/vehiculos', [UserVehiculoController::class, 'store'])->name('vehiculos.store');
         //Route::post('/vehiculos', [UserVehiculoController::class, 'store'])->name('user.vehiculos.store');
         //Route::get('/vehiculos/{id}', [UserVehiculoController::class, 'show'])->name('user.vehiculos.show');
