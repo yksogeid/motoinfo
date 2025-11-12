@@ -37,7 +37,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('roles/{role}/users', [RoleUserController::class, 'index'])->name('admin.roles.users.index');
         Route::post('roles/{role}/users', [RoleUserController::class, 'attach'])->name('admin.roles.users.attach');
         Route::delete('roles/{role}/users/{user}', [RoleUserController::class, 'detach'])->name('admin.roles.users.detach');
-
     });
 
     // Rutas de Editor
@@ -45,7 +44,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/dashboard', [EditorDashboard::class, 'index'])->name('editor.dashboard');
     });
     // Rutas de mecanico
-     Route::middleware(['role:mecanico'])->prefix('mecanico')->group(function () {
+    Route::middleware(['role:mecanico'])->prefix('mecanico')->group(function () {
         Route::get('/dashboard', [MecanicoDashboard::class, 'index'])->name('mecanico.dashboard');
     });
 
