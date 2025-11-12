@@ -11,6 +11,7 @@ use App\Http\Controllers\User\DocumentoVehiculoController as DocumentoVehiculoCo
 use App\Http\Controllers\User\vehiculoController as vehiculoController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\RoleUserController;
+use App\Http\Controllers\Admin\validarDocumentosController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -28,6 +29,8 @@ Route::get('/dashboard', function () {
     }
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+
+
 Route::middleware(['auth', 'verified'])->group(function () {
 
     // Rutas de Admin
@@ -37,12 +40,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('roles/{role}/users', [RoleUserController::class, 'index'])->name('admin.roles.users.index');
         Route::post('roles/{role}/users', [RoleUserController::class, 'attach'])->name('admin.roles.users.attach');
         Route::delete('roles/{role}/users/{user}', [RoleUserController::class, 'detach'])->name('admin.roles.users.detach');
+
+        // Ruta para la verificacion de documentos
+        Route::get('/validardocumentos', [validarDocumentosController::class, 'index'])->name('admin.validardocumentos');
+        Route::post('/admin/documentos/validar', [validarDocumentosController::class, 'validar'])->name('documentos.validar');
+
     });
 
     // Rutas de Editor
     Route::middleware(['role:editor'])->prefix('editor')->group(function () {
         Route::get('/dashboard', [EditorDashboard::class, 'index'])->name('editor.dashboard');
     });
+
     // Rutas de mecanico
     Route::middleware(['role:mecanico'])->prefix('mecanico')->group(function () {
         Route::get('/dashboard', [MecanicoDashboard::class, 'index'])->name('mecanico.dashboard');
@@ -53,8 +62,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/dashboard', [UserDashboard::class, 'index'])->name('user.dashboard');
         Route::get('/motos', [UserMoto::class, 'index'])->name('user.motos');
 
-
-        // 🏍️ CRUD de relaciones usuario-vehículo
         //Route::get('/vehiculos', [UserVehiculoController::class, 'index'])->name('user.vehiculos.index');
         Route::get('/dashboard/crearVehiculo', [UserVehiculoController::class, 'create'])->name('vehiculos.create');
         Route::post('/vehiculo/{idVehiculo}/documentos/subir', [DocumentoVehiculoController::class, 'subir'])->name('documentos.subir');
