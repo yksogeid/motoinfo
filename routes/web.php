@@ -55,6 +55,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Rutas de mecanico
     Route::middleware(['role:mecanico'])->prefix('mecanico')->group(function () {
         Route::get('/dashboard', [MecanicoDashboard::class, 'index'])->name('mecanico.dashboard');
+        Route::get('/misMantenimientos', [MecanicoDashboard::class, 'misMantenimientos'])->name('mecanico.misMantenimientos');
+        Route::get('/mantenimientosPorRealizar', [MecanicoDashboard::class, 'mantenimientosPorRealizar'])->name('mecanico.mantenimientosPorRealizar');
     });
 
     // Rutas de Usuario normal

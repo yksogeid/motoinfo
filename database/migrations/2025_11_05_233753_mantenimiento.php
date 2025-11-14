@@ -22,6 +22,7 @@ return new class extends Migration
             $table->unsignedBigInteger("idAsesor");
             $table->foreign("idMecanico")->references("id")->on("users")->onDelete("cascade");
             $table->unsignedBigInteger("idMecanico");
+            $table->date("fechaProgramada");
             $table->timestamps();
         });
     }

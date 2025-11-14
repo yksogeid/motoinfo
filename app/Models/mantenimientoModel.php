@@ -4,13 +4,13 @@ namespace App\Models;
 
 use App\Models\Estado;
 use App\Models\User;
-use App\Models\Vehiculo;
+use App\Models\vehiculoModel;
 use Illuminate\Database\Eloquent\Model;
 
 class mantenimientoModel extends Model
 {
     protected $table = 'mantenimiento';
-    protected $fillable = ['idVehiculo', 'observacion', 'idEstado', 'idAsesor', 'idMecanico'];  
+    protected $fillable = ['idVehiculo', 'observacion', 'idEstado', 'idAsesor', 'idMecanico', 'fechaProgramada'];  
 
     public function asesor()
     {
@@ -29,6 +29,6 @@ class mantenimientoModel extends Model
 
     public function vehiculo()
     {
-        return $this->belongsTo(Vehiculo::class, 'idVehiculo');
+        return $this->belongsTo(vehiculoModel::class, 'idVehiculo');
     }
 }

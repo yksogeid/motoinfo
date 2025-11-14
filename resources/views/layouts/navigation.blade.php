@@ -56,6 +56,17 @@
                         {{ __('Inicio') }}
                     </x-nav-link>
                     @endrole
+                     @role('mecanico')
+                    <x-nav-link :href="route('mecanico.dashboard')" :active="request()->routeIs('user.dashboard')" class="dark:text-gray-200">
+                        {{ __('Inicio') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('mecanico.misMantenimientos')" :active="request()->routeIs('mecanico.misMantenimientos')" class="dark:text-gray-200">
+                        {{ __('Realizados') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('mecanico.mantenimientosPorRealizar')" :active="request()->routeIs('mecanico.mantenimientosPorRealizar')" class="dark:text-gray-200">
+                        {{ __('Por realizar') }}
+                    </x-nav-link>
+                    @endrole
                 </div>
             </div>
 
