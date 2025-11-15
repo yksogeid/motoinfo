@@ -9,8 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
-class AuthenticatedSessionController extends Controller
-{
+class AuthenticatedSessionController extends Controller {
     /**
      * Display the login view.
      */
@@ -22,26 +21,28 @@ class AuthenticatedSessionController extends Controller
     /**
      * Handle an incoming authentication request.
      */
-    public function store(LoginRequest $request): RedirectResponse
-{
+
+    public function store(LoginRequest $request): RedirectResponse {
     $request->authenticate();
     $request->session()->regenerate();
 
-    // Redirección según rol
+    //Segun el rol redirige a la vista correspondiente
     if ($request->user()->hasRole('admin')) {
-        return redirect()->intended(route('admin.dashboard'));
+        return redirect()->route('admin.dashboard');
     } elseif ($request->user()->hasRole('mecanico')) {
-        return redirect()->intended(route('mecanico.dashboard'));
+        return redirect()->route('mecanico.dashboard');
+    } elseif ($request->user()->hasRole('editor')) {
+        return redirect()->route('editor.dashboard');
     } else {
-        return redirect()->intended(route('user.dashboard'));
+        return redirect()->route('user.dashboard');
     }
 }
+
 
     /**
      * Destroy an authenticated session.
      */
-    public function destroy(Request $request): RedirectResponse
-    {
+    public function destroy(Request $request): RedirectResponse {
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();

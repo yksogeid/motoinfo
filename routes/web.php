@@ -20,14 +20,27 @@ Route::get('/', function () {
 
 // Ruta dashboard que redirige según el rol
 Route::get('/dashboard', function () {
-    if (auth()->user()->hasRole('admin')) {
+    $user = auth()->user();
+
+    if ($user->hasRole('admin')) {
         return redirect()->route('admin.dashboard');
-    } elseif (auth()->user()->hasRole('mecanico')) {
-        return redirect()->route('mecanico.dashboard');
-    } else {
-        return redirect()->route('user.dashboard');
     }
+
+    if ($user->hasRole('mecanico')) {
+        return redirect()->route('mecanico.dashboard');
+    }
+
+    if ($user->hasRole('editor')) {
+        return redirect()->route('editor.dashboard');
+    }
+
+    if ($user->hasRole('asesor')) {
+        return redirect()->route('asesor.dashboard');
+    }
+
+    return redirect()->route('user.dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+
 
 
 

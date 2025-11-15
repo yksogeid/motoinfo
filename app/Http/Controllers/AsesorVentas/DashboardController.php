@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Mecanico;
+namespace App\Http\Controllers\AsesorVentas;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
