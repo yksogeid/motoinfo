@@ -22,21 +22,36 @@ class AuthenticatedSessionController extends Controller {
      * Handle an incoming authentication request.
      */
 
-    public function store(LoginRequest $request): RedirectResponse {
+    public function store(LoginRequest $request): RedirectResponse
+{
     $request->authenticate();
     $request->session()->regenerate();
 
-    //Segun el rol redirige a la vista correspondiente
-    if ($request->user()->hasRole('admin')) {
-        return redirect()->route('admin.dashboard');
-    } elseif ($request->user()->hasRole('mecanico')) {
-        return redirect()->route('mecanico.dashboard');
-    } elseif ($request->user()->hasRole('editor')) {
-        return redirect()->route('editor.dashboard');
-    } else {
-        return redirect()->route('user.dashboard');
+    $user = $request->user();
+
+    // Si el usuario tiene más de un rol → mostrar pantalla de selección
+    if ($user->roles->count() > 1) {
+        return redirect()->route('select.role');
     }
+
+    // Si solo tiene un rol, redirige normal
+    if ($user->hasRole('admin')) {
+        session(['selected_role' => 'admin']);
+        return redirect()->route('admin.dashboard');
+    }
+    if ($user->hasRole('mecanico')) {
+        session(['selected_role' => 'mecanico']);
+        return redirect()->route('mecanico.dashboard');
+    }
+    if ($user->hasRole('editor')) {
+        session(['selected_role' => 'editor']);
+        return redirect()->route('editor.dashboard');
+    }
+
+    session(['selected_role' => 'user']);
+    return redirect()->route('user.dashboard');
 }
+
 
 
     /**
@@ -51,4 +66,31 @@ class AuthenticatedSessionController extends Controller {
 
         return redirect('/');
     }
+
+    public function switchRole($role) 
+{
+    $user = auth()->user();
+
+    // Validar que el usuario realmente tenga ese rol
+    if (! $user->hasRole($role)) {
+        abort(403, 'No tienes permiso para usar este rol.');
+    }
+
+    // Guardamos el rol elegido en sesión
+    session(['selected_role' => $role]);
+
+    // Redirigir al dashboard correcto
+    if ($role === 'admin') {
+        return redirect()->route('admin.dashboard');
+    }
+    if ($role === 'mecanico') {
+        return redirect()->route('mecanico.dashboard');
+    }
+    if ($role === 'editor') {
+        return redirect()->route('editor.dashboard');
+    }
+    
+    return redirect()->route('user.dashboard');
+}
+
 }

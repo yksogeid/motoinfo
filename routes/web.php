@@ -12,7 +12,9 @@ use App\Http\Controllers\User\vehiculoController as vehiculoController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\RoleUserController;
 use App\Http\Controllers\Admin\validarDocumentosController;
+use App\Http\Controllers\Auth\RoleSwitchController;
 use Illuminate\Support\Facades\Route;
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -34,8 +36,8 @@ Route::get('/dashboard', function () {
         return redirect()->route('editor.dashboard');
     }
 
-    if ($user->hasRole('asesor')) {
-        return redirect()->route('asesor.dashboard');
+    if ($user->hasRole('Asesor Ventas')) {
+        return redirect()->route('AsesorVentas.dashboard');
     }
 
     return redirect()->route('user.dashboard');
@@ -89,6 +91,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         // 🏍️ CRUD de documentos de vehículos
         Route::get('/documentos-vehiculos/{vehiculo_id}', [DocumentoVehiculoController::class, 'index'])->name('user.documentos-vehiculos.index');
+
+        // Rutas para seleccionar el rol
+        Route::get('/select-role', function () {
+            $roles = auth()->user()->getRoleNames();
+            return view('auth.select-role', compact('roles'));
+        })->middleware('auth')->name('select.role');
+
+        // Ruta para cambiar el rol
+        Route::get('/switch-role/{role}', [RoleSwitchController::class, 'switch'])
+            ->middleware('auth')
+            ->name('role.switch');
+
     });
 });
 
