@@ -36,8 +36,8 @@ Route::get('/dashboard', function () {
         return redirect()->route('editor.dashboard');
     }
 
-    if ($user->hasRole('Asesor Ventas')) {
-        return redirect()->route('AsesorVentas.dashboard');
+    if ($user->hasRole('asesorVentas')) {
+        return redirect()->route('asesor.dashboard');
     }
 
     return redirect()->route('user.dashboard');
@@ -61,6 +61,38 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/admin/documentos/validar', [validarDocumentosController::class, 'validar'])->name('documentos.validar');
 
     });
+
+    //Rutas Asesor Ventas
+Route::middleware(['role:asesorVentas'])
+    ->prefix('asesor')
+    ->name('asesor.')
+    ->group(function () {
+
+        // Dashboard
+        Route::get('/dashboard', 
+            [\App\Http\Controllers\AsesorVentas\DashboardController::class, 'index']
+        )->name('dashboard');
+
+        // Gestión de mecánicos
+        Route::resource(
+            'mecanicos',
+            \App\Http\Controllers\AsesorVentas\MecanicosController::class
+        );
+
+        // Gestión de repuestos
+        Route::resource(
+            'repuestos',
+            \App\Http\Controllers\AsesorVentas\RepuestosController::class
+        );
+
+        // Gestión de mantenimientos
+        Route::resource(
+            'mantenimientos',
+            \App\Http\Controllers\AsesorVentas\MantenimientosController::class
+        )->only(['index', 'show']);
+});
+
+
 
     // Rutas de Editor
     Route::middleware(['role:editor'])->prefix('editor')->group(function () {
