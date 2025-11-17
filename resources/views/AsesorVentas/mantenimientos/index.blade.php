@@ -1,6 +1,6 @@
-@extends('layouts.app')
+@extends('asesorVentas.layouts.app')
+@section('asesor-content')
 
-@section('content')
 <div class="container">
     <h2 class="mb-4">Mantenimientos Programados</h2>
 

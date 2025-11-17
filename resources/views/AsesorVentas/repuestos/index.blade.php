@@ -1,6 +1,6 @@
 @extends('asesorVentas.layouts.app')
+@section('asesor-content')
 
-@section('content')
 <div class="container mt-4">
 
     <h2 class="mb-4">Repuestos Disponibles</h2>
