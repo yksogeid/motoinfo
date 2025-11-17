@@ -11,7 +11,7 @@
         <div class="flex gap-3">
 
             <!-- Botón Regresar -->
-            <a href="{{ url()->previous() }}"
+            <a href="{{ url()->route('asesor.dashboard') }}"
                class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-600/20 dark:bg-gray-700
                       text-gray-700 dark:text-gray-300 hover:bg-gray-600/30 transition">
                 <i data-lucide="arrow-left"></i> Regresar
