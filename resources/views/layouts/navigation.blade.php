@@ -90,16 +90,30 @@
 
                     <x-slot name="content">
                         <!-- Rol del usuario -->
-                        <div class="px-4 py-2 text-xs text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700 transition-colors duration-200">
-                            Rol:
-                            @if(Auth::user()->hasRole('admin'))
-                            <span class="ml-1 px-2 py-0.5 bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 rounded text-[11px] font-medium transition-colors duration-200">Admin</span>
-                            @elseif(Auth::user()->hasRole('editor'))
-                            <span class="ml-1 px-2 py-0.5 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 rounded text-[11px] font-medium transition-colors duration-200">Editor</span>
-                            @else
-                            <span class="ml-1 px-2 py-0.5 bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 rounded text-[11px] font-medium transition-colors duration-200">Usuario</span>
-                            @endif
-                        </div>
+@php
+    // Detectar el rol activo desde la sesión o cargar el primero asignado
+    $currentRole = session('selected_role') ?? Auth::user()->roles()->first()->name;
+
+    // Valores estéticos (colores por rol)
+    $roleStyles = [
+        'admin'        => ['bg' => 'bg-red-100 dark:bg-red-900/40', 'text' => 'text-red-700 dark:text-red-300'],
+        'mecanico'     => ['bg' => 'bg-blue-100 dark:bg-blue-900/40', 'text' => 'text-blue-700 dark:text-blue-300'],
+        'editor'       => ['bg' => 'bg-yellow-100 dark:bg-yellow-900/40', 'text' => 'text-yellow-700 dark:text-yellow-300'],
+        'asesorVentas' => ['bg' => 'bg-purple-100 dark:bg-purple-900/40', 'text' => 'text-purple-700 dark:text-purple-300'],
+        'user'         => ['bg' => 'bg-green-100 dark:bg-green-900/40', 'text' => 'text-green-700 dark:text-green-300'],
+    ];
+
+    $style = $roleStyles[$currentRole] ?? $roleStyles['user'];
+@endphp
+
+
+<div class="px-4 py-2 text-xs text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700">
+    Rol:
+    <span class="ml-1 px-2 py-0.5 rounded text-[11px] font-medium {{ $style['bg'] }} {{ $style['text'] }}">
+        {{ ucfirst($currentRole) }}
+    </span>
+</div>
+
 
                         <!-- Enlace Perfil -->
                         <x-dropdown-link
