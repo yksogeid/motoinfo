@@ -89,7 +89,8 @@ Route::middleware(['role:asesorVentas'])
         Route::resource(
             'mantenimientos',
             \App\Http\Controllers\AsesorVentas\MantenimientosController::class
-        )->only(['index', 'show']);
+        );
+
 });
 
 
