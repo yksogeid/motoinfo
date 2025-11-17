@@ -5,7 +5,7 @@ namespace App\Http\Controllers\AsesorVentas;
 use App\Http\Controllers\Controller;
 use App\Models\mantenimientoModel;
 use App\Models\vehiculoModel;
-use App\Models\Estado;
+use App\Models\estadoModel; // ← Importación correcta
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -30,10 +30,11 @@ class MantenimientosController extends Controller
     {
         $vehiculos = vehiculoModel::all();
         $mecanicos = User::role('mecanico')->get();
-        $estados   = Estado::all();
+        $estados   = estadoModel::all(); // ← corregido
 
         return view('asesorVentas.mantenimientos.create', compact('vehiculos', 'mecanicos', 'estados'));
     }
+
 
     /**
      * Guardar nuevo mantenimiento
@@ -54,7 +55,7 @@ class MantenimientosController extends Controller
             'idEstado'        => $request->idEstado,
             'fechaProgramada' => $request->fechaProgramada,
             'observacion'     => $request->observacion,
-            'idAsesor'        => auth()->user()->id, // asesor logueado
+            'idAsesor'        => auth()->user()->id,
         ]);
 
         return redirect()->route('asesor.mantenimientos.index')
@@ -81,7 +82,7 @@ class MantenimientosController extends Controller
 
         $vehiculos = vehiculoModel::all();
         $mecanicos = User::role('mecanico')->get();
-        $estados   = Estado::all();
+        $estados   = estadoModel::all(); // ← corregido
 
         return view('asesorVentas.mantenimientos.edit', compact(
             'mantenimiento',
@@ -130,6 +131,7 @@ class MantenimientosController extends Controller
             ->with('success', 'Mantenimiento eliminado correctamente.');
     }
 }
+
 
 
 

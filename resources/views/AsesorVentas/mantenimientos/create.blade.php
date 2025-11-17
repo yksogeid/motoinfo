@@ -1,72 +1,98 @@
 @extends('layouts.app')
+@section('title', 'Programar Nuevo Mantenimiento')
 
 @section('content')
-<div class="container">
+<div class="min-h-screen py-14 px-6 relative overflow-hidden">
 
-    <h2 class="mb-4">Programar Nuevo Mantenimiento</h2>
+    {{-- Fondo decorativo --}}
+    <div class="absolute inset-0 -z-10 bg-gradient-to-br from-gray-100 via-white to-gray-200 dark:from-gray-900 dark:via-gray-800 dark:to-black"></div>
 
-    @if ($errors->any())
-        <div class="alert alert-danger">
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
+    {{-- Encabezado y botones --}}
+    <div class="max-w-5xl mx-auto flex items-center justify-between mb-10">
+        <h1 class="text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight">
+            Programar Nuevo Mantenimiento
+        </h1>
 
-    <form action="{{ route('asesor.mantenimientos.store') }}" method="POST">
-        @csrf
+        <a href="{{ route('asesor.mantenimientos.index') }}"
+            class="px-4 py-2 rounded-xl bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 
+                   text-gray-700 dark:text-gray-200 flex items-center gap-2 transition shadow-sm">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i> Volver
+        </a>
+    </div>
 
-        <div class="mb-3">
-            <label for="vehiculo" class="form-label"><strong>Vehículo</strong></label>
-            <select name="idVehiculo" class="form-control" required>
-                <option value="">Seleccione un vehículo</option>
-                @foreach($vehiculos as $v)
-                    <option value="{{ $v->id }}">
-                        {{ $v->placa }} - {{ $v->marca }} {{ $v->modelo }}
-                    </option>
-                @endforeach
-            </select>
-        </div>
+    {{-- Tarjeta Formulario --}}
+    <div class="max-w-5xl mx-auto bg-white/90 dark:bg-gray-900/70 backdrop-blur-md border border-gray-200 dark:border-gray-700 shadow-xl rounded-2xl p-10 space-y-8">
 
-        <div class="mb-3">
-            <label class="form-label"><strong>Mecánico</strong></label>
-            <select name="idMecanico" class="form-control" required>
-                <option value="">Seleccione un mecánico</option>
-                @foreach($mecanicos as $m)
-                    <option value="{{ $m->id }}">
-                        {{ $m->name }} ({{ $m->email }})
-                    </option>
-                @endforeach
-            </select>
-        </div>
+        <form action="{{ route('asesor.mantenimientos.store') }}" method="POST" class="space-y-7">
+            @csrf
 
-        <div class="mb-3">
-            <label class="form-label"><strong>Estado</strong></label>
-            <select name="idEstado" class="form-control" required>
-                <option value="">Seleccione un estado</option>
-                @foreach($estados as $e)
-                    <option value="{{ $e->id }}">
-                        {{ $e->nombre }}
-                    </option>
-                @endforeach
-            </select>
-        </div>
+            {{-- Vehículo --}}
+            <div>
+                <label class="block font-medium mb-1 text-gray-700 dark:text-gray-300">Vehículo</label>
+                <select name="idVehiculo" class="w-full rounded-xl border-gray-300 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300">
+                    <option value="">Seleccione un vehículo</option>
+                    @foreach($vehiculos as $vehiculo)
+                        <option value="{{ $vehiculo->id }}">{{ $vehiculo->placa ?? 'Vehículo #'.$vehiculo->id }}</option>
+                    @endforeach
+                </select>
+            </div>
 
-        <div class="mb-3">
-            <label class="form-label"><strong>Fecha programada</strong></label>
-            <input type="date" name="fechaProgramada" class="form-control" required>
-        </div>
+            {{-- Mecánico --}}
+            <div>
+                <label class="block font-medium mb-1 text-gray-700 dark:text-gray-300">Mecánico</label>
+                <select name="idMecanico" class="w-full rounded-xl border-gray-300 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300">
+                    <option value="">Seleccione un mecánico</option>
+                    @foreach($mecanicos as $mecanico)
+                        <option value="{{ $mecanico->id }}">{{ $mecanico->name }}</option>
+                    @endforeach
+                </select>
+            </div>
 
-        <div class="mb-3">
-            <label class="form-label"><strong>Observación</strong></label>
-            <textarea name="observacion" class="form-control" rows="4" required></textarea>
-        </div>
+            {{-- Estado --}}
+            <div>
+                <label class="block font-medium mb-1 text-gray-700 dark:text-gray-300">Estado</label>
+                <select name="idEstado" class="w-full rounded-xl border-gray-300 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300">
+                    <option value="">Seleccione un estado</option>
+                    @foreach($estados as $estado)
+                        <option value="{{ $estado->id }}">{{ $estado->nombre }}</option>
+                    @endforeach
+                </select>
+            </div>
 
-        <button type="submit" class="btn btn-primary">Guardar Mantenimiento</button>
-        <a href="{{ route('asesor.mantenimientos.index') }}" class="btn btn-secondary">Cancelar</a>
-    </form>
+            {{-- Fecha programada --}}
+            <div>
+                <label class="block font-medium mb-1 text-gray-700 dark:text-gray-300">Fecha Programada</label>
+                <input type="date" name="fechaProgramada" class="w-full rounded-xl border-gray-300 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300" required>
+            </div>
 
+            {{-- Observación --}}
+            <div>
+                <label class="block font-medium mb-1 text-gray-700 dark:text-gray-300">Observación</label>
+                <textarea name="observacion" rows="4"
+                    class="w-full rounded-xl border-gray-300 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 resize-none"></textarea>
+            </div>
+
+            {{-- Botones --}}
+            <div class="flex items-center justify-end gap-4 pt-3">
+                <a href="{{ route('asesor.mantenimientos.index') }}"
+                    class="px-4 py-2 rounded-xl bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 
+                           text-gray-700 dark:text-gray-200 transition shadow-sm flex items-center gap-2">
+                    <i data-lucide="x" class="w-4 h-4"></i> Cancelar
+                </a>
+
+                <button type="submit"
+                    class="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-medium shadow-md flex items-center gap-2 transition">
+                    <i data-lucide="save" class="w-4 h-4"></i> Guardar Mantenimiento
+                </button>
+            </div>
+
+        </form>
+
+    </div>
 </div>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script> lucide.createIcons(); </script>
+
 @endsection
+
