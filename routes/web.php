@@ -52,7 +52,7 @@ Route::middleware('auth')->group(function () {
 Route::get('/dashboard', function () {
 
     $user = auth()->user();
-    $role = session('selected_role'); 
+    $role = session('selected_role');
 
     // Si no existe rol en sesión, obligar a seleccionar
     if (!$role) {
@@ -79,51 +79,97 @@ Route::get('/dashboard', function () {
 
 /*
 |--------------------------------------------------------------------------
-| Rutas protegidas según el rol
+| Rutas protegidas según el rol + rol seleccionado
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'verified'])->group(function () {
 
-    // ADMIN
-    Route::middleware('role:admin')->prefix('admin')->group(function () {
+    /*
+    |--------------------------------------------------------------------------
+    | ADMIN
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware(['role:admin', 'selected_role:admin'])
+        ->prefix('admin')
+        ->group(function () {
+
         Route::get('/dashboard', [AdminDashboard::class, 'index'])->name('admin.dashboard');
+
         Route::resource('roles', RoleController::class)->names('admin.roles');
+
         Route::get('roles/{role}/users', [RoleUserController::class, 'index'])->name('admin.roles.users.index');
         Route::post('roles/{role}/users', [RoleUserController::class, 'attach'])->name('admin.roles.users.attach');
         Route::delete('roles/{role}/users/{user}', [RoleUserController::class, 'detach'])->name('admin.roles.users.detach');
+
         Route::get('/validardocumentos', [validarDocumentosController::class, 'index'])->name('admin.validardocumentos');
         Route::post('/admin/documentos/validar', [validarDocumentosController::class, 'validar'])->name('documentos.validar');
     });
 
-    // ASESOR VENTAS
-    Route::middleware('role:asesorVentas')->prefix('asesor')->name('asesor.')->group(function () {
+
+    /*
+    |--------------------------------------------------------------------------
+    | ASESOR DE VENTAS
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware(['role:asesorVentas', 'selected_role:asesorVentas'])
+        ->prefix('asesor')
+        ->name('asesor.')
+        ->group(function () {
+
         Route::get('/dashboard', [\App\Http\Controllers\AsesorVentas\DashboardController::class, 'index'])->name('dashboard');
         Route::resource('mecanicos', MecanicosController::class);
         Route::resource('repuestos', RepuestosController::class);
         Route::resource('mantenimientos', MantenimientosController::class);
     });
 
-    // EDITOR
-    Route::middleware('role:editor')->prefix('editor')->group(function () {
+
+    /*
+    |--------------------------------------------------------------------------
+    | EDITOR
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware(['role:editor', 'selected_role:editor'])
+        ->prefix('editor')
+        ->group(function () {
+
         Route::get('/dashboard', [EditorDashboard::class, 'index'])->name('editor.dashboard');
     });
 
-    // MECÁNICO
-    Route::middleware('role:mecanico')->prefix('mecanico')->group(function () {
+
+    /*
+    |--------------------------------------------------------------------------
+    | MECÁNICO
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware(['role:mecanico', 'selected_role:mecanico'])
+        ->prefix('mecanico')
+        ->group(function () {
+
         Route::get('/dashboard', [MecanicoDashboard::class, 'index'])->name('mecanico.dashboard');
         Route::get('/misMantenimientos', [MecanicoDashboard::class, 'misMantenimientos'])->name('mecanico.misMantenimientos');
         Route::get('/mantenimientosPorRealizar', [MecanicoDashboard::class, 'mantenimientosPorRealizar'])->name('mecanico.mantenimientosPorRealizar');
     });
 
-    // USUARIO NORMAL
-    Route::middleware('role:user')->prefix('user')->group(function () {
+
+    /*
+    |--------------------------------------------------------------------------
+    | USUARIO NORMAL
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware(['role:user', 'selected_role:user'])
+        ->prefix('user')
+        ->group(function () {
+
         Route::get('/dashboard', [UserDashboard::class, 'index'])->name('user.dashboard');
         Route::get('/motos', [UserMoto::class, 'index'])->name('user.motos');
+
         Route::get('/dashboard/crearVehiculo', [UserVehiculoController::class, 'create'])->name('vehiculos.create');
         Route::post('/vehiculo/{idVehiculo}/documentos/subir', [DocumentoVehiculoController::class, 'subir'])->name('documentos.subir');
+
         Route::post('/vehiculos', [UserVehiculoController::class, 'store'])->name('vehiculos.store');
         Route::put('/vehiculos/{id}', [UserVehiculoController::class, 'update'])->name('user.vehiculos.update');
         Route::delete('/vehiculos/{id}', [UserVehiculoController::class, 'destroy'])->name('user.vehiculos.destroy');
+
         Route::get('/documentos-vehiculos/{vehiculo_id}', [DocumentoVehiculoController::class, 'index'])->name('user.documentos-vehiculos.index');
     });
 });
