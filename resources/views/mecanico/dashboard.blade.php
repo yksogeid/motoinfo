@@ -70,7 +70,8 @@
         </a>
 
 
-        {{-- Mecánicos --}}
+        {{-- Mantenimientos por realizar --}}
+                <a href="{{route('mecanico.mantenimientosPorRealizar')}}" class="block group">
         <div class="group relative rounded-3xl overflow-hidden border
                     bg-white/90 dark:bg-gray-900/70 border-gray-200 dark:border-gray-700 
                     shadow-[0_10px_25px_-10px_rgba(0,0,0,0.25)] dark:shadow-[0_0_35px_-10px_rgba(34,197,94,0.35)]
@@ -90,8 +91,12 @@
                     {{ $mantenimientosPorRealizar ?? '0' }}
                 </h3>
                 <p class="text-gray-600 dark:text-gray-400 font-medium">Mantenimientos por realizar</p>
+            <span class="text-xs text-gray-500 dark:text-gray-400">
+                        Da clic para ver.
+                    </span>
             </div>
         </div>
+        </a>
 
         {{-- Usuarios Normales --}}
         <div class="group relative rounded-3xl overflow-hidden border

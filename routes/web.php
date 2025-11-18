@@ -57,6 +57,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/dashboard', [MecanicoDashboard::class, 'index'])->name('mecanico.dashboard');
         Route::get('/misMantenimientos', [MecanicoDashboard::class, 'misMantenimientos'])->name('mecanico.misMantenimientos');
         Route::get('/mantenimientosPorRealizar', [MecanicoDashboard::class, 'mantenimientosPorRealizar'])->name('mecanico.mantenimientosPorRealizar');
+        Route::post('/guardar', [MecanicoDashboard::class, 'guardarConclusion']);
+        Route::post('/transcribirAudio', [MecanicoDashboard::class, 'transcribirAudio']);
+
     });
 
     // Rutas de Usuario normal

@@ -23,6 +23,8 @@ return new class extends Migration
             $table->foreign("idMecanico")->references("id")->on("users")->onDelete("cascade");
             $table->unsignedBigInteger("idMecanico");
             $table->date("fechaProgramada");
+            $table->date("fechaRealizado")->nullable();
+            $table->String('observacionMecanico')->nullable();
             $table->timestamps();
         });
     }

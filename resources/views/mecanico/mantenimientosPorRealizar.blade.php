@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('title', 'Mecanico - Mantenimientos Por Realizar')
 
 @section('content')
 <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -80,6 +81,7 @@
                                 <i data-lucide="car" class="w-5 h-5 text-white"></i>
                             </div>
                             <div>
+                                <h3 class="text-lg font-bold text-white">{{ $item->vehiculo->linea->nombre ?? 'N/A' }}</h3>
                                 <h3 class="text-lg font-bold text-white">{{ $item->vehiculo->placa ?? 'N/A' }}</h3>
                                 <p class="text-xs text-amber-100">{{ $item->vehiculo->modelo ?? 'Sin modelo' }}</p>
                             </div>
@@ -116,11 +118,19 @@
 
 
                     <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
-                        <a href="{{ url('mantenimiento/'.$item->id) }}"
+                        <button onclick="openModal({{ json_encode([
+                            'id' => $item->id,
+                            'placa' => $item->vehiculo->placa ?? 'N/A',
+                            'linea' => $item->vehiculo->linea->nombre ?? 'N/A',
+                            'modelo' => $item->vehiculo->modelo ?? 'Sin modelo',
+                            'observacion' => $item->observacion ?? 'Sin observación',
+                            'fechaProgramada' => $item->fechaProgramada ? \Carbon\Carbon::parse($item->fechaProgramada)->format('d/m/Y') : 'Sin fecha',
+                            'fechaCreacion' => $item->created_at ? $item->created_at->format('d/m/Y H:i') : 'N/A'
+                        ]) }})"
                             class="flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-lg transition-colors">
                             <i data-lucide="eye" class="w-4 h-4"></i>
                             Ver Detalles
-                        </a>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -152,9 +162,384 @@
     </div>
 </div>
 
+{{-- Modal de Detalles --}}
+<div id="detailModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
+        {{-- Header del Modal --}}
+        <div class="bg-gradient-to-r from-emerald-500 to-emerald-600 px-6 py-5 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center">
+                    <i data-lucide="file-text" class="w-6 h-6 text-white"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl font-bold text-white">Detalles del Mantenimiento</h2>
+                    <p class="text-sm text-emerald-100">Información completa del registro</p>
+                </div>
+            </div>
+            <button onclick="closeModal()" class="text-white hover:bg-white/20 rounded-lg p-2 transition-colors">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+        </div>
+
+        {{-- Contenido del Modal --}}
+        <div class="p-6 overflow-y-auto max-h-[calc(90vh-180px)]">
+            <div class="space-y-6">
+                {{-- Información del Vehículo --}}
+                <div class="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-5 border border-gray-200 dark:border-gray-600">
+                    <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                        <i data-lucide="car" class="w-5 h-5 text-emerald-600"></i>
+                        Información del Vehículo
+                    </h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-1">Placa</p>
+                            <p id="modalPlaca" class="text-base font-bold text-gray-900 dark:text-white">-</p>
+                        </div>
+                        <div>
+                            <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-1">Línea</p>
+                            <p id="modalLinea" class="text-base font-bold text-gray-900 dark:text-white">-</p>
+                        </div>
+                        <div class="col-span-2">
+                            <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-1">Modelo</p>
+                            <p id="modalModelo" class="text-base text-gray-700 dark:text-gray-300">-</p>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Detalles del Mantenimiento --}}
+                <div class="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-5 border border-gray-200 dark:border-gray-600">
+                    <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                        <i data-lucide="wrench" class="w-5 h-5 text-emerald-600"></i>
+                        Detalles del Mantenimiento
+                    </h3>
+                    <div class="space-y-4">
+                        <div>
+                            <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-1">Fecha Programada</p>
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="calendar-check" class="w-4 h-4 text-emerald-600"></i>
+                                <p id="modalFechaProgramada" class="text-base text-gray-900 dark:text-white font-medium">-</p>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-1">Fecha de Registro</p>
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="clock" class="w-4 h-4 text-gray-600 dark:text-gray-400"></i>
+                                <p id="modalFechaCreacion" class="text-base text-gray-700 dark:text-gray-300">-</p>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-2">Observaciones</p>
+                            <div class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-600">
+                                <p id="modalObservacion" class="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">-</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Conclusión Técnica del Mecánico --}}
+                <div class="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-5 border-2 border-blue-200 dark:border-blue-700">
+                    <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                        <i data-lucide="clipboard-check" class="w-5 h-5 text-blue-600"></i>
+                        Conclusión Técnica
+                    </h3>
+
+                    <form id="conclusionForm" class="space-y-4">
+                        <input type="hidden" id="mantenimientoId" value="">
+
+                        {{-- Textarea para conclusión --}}
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Ingrese su conclusión técnica
+                            </label>
+                            <textarea
+                                id="conclusionText"
+                                rows="4"
+                                placeholder="Describa el trabajo realizado, partes reemplazadas, condición del vehículo..."
+                                class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white resize-none"></textarea>
+                        </div>
+
+                        {{-- Botones de control de audio --}}
+                        <div class="flex items-center gap-3">
+                            <button
+                                type="button"
+                                id="recordBtn"
+                                onclick="toggleRecording()"
+                                class="flex items-center gap-2 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-colors">
+                                <i data-lucide="mic" class="w-4 h-4"></i>
+                                <span id="recordBtnText">Grabar Audio</span>
+                            </button>
+
+                            <div id="recordingIndicator" class="hidden flex items-center gap-2 text-red-600 dark:text-red-400 animate-pulse">
+                                <div class="w-3 h-3 bg-red-600 rounded-full"></div>
+                                <span class="text-sm font-medium">Grabando...</span>
+                                <span id="recordingTime" class="text-sm">0:00</span>
+                            </div>
+                        </div>
+
+                        {{-- Audio player (oculto inicialmente) --}}
+                        <div id="audioPreview" class="hidden bg-white dark:bg-gray-700 rounded-lg p-4 border border-gray-200 dark:border-gray-600">
+                            <div class="flex items-center gap-3">
+                                <i data-lucide="volume-2" class="w-5 h-5 text-blue-600"></i>
+                                <audio id="audioPlayer" controls class="flex-1 h-10"></audio>
+                                <button
+                                    type="button"
+                                    onclick="clearAudio()"
+                                    class="text-red-600 hover:text-red-700 p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20">
+                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        {{-- Botón guardar --}}
+                        <div class="flex justify-end pt-2">
+                            <button
+                                type="submit"
+                                class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors flex items-center gap-2">
+                                <i data-lucide="save" class="w-4 h-4"></i>
+                                Guardar Conclusión
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        {{-- Footer del Modal --}}
+        <div class="bg-gray-50 dark:bg-gray-700/50 px-6 py-4 flex items-center justify-between border-t border-gray-200 dark:border-gray-600">
+            <button onclick="closeModal()"
+                class="px-5 py-2.5 bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-200 font-semibold rounded-lg transition-colors">
+                Cerrar
+            </button>
+            <a id="modalVerCompleto" href="#"
+                class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg transition-colors flex items-center gap-2">
+                <i data-lucide="external-link" class="w-4 h-4"></i>
+                Ver página completa
+            </a>
+        </div>
+    </div>
+</div>
+
 <script src="https://unpkg.com/lucide@latest"></script>
 <script>
     lucide.createIcons();
+
+    // VARIABLES PARA GRABACIÓN DE AUDIO
+    let mediaRecorder;
+    let audioChunks = [];
+    let recordingInterval;
+    let recordingSeconds = 0;
+    let audioBlob = null;
+
+    // FUNCIONES DEL MODAL
+    function openModal(data) {
+        document.getElementById('modalPlaca').textContent = data.placa;
+        document.getElementById('modalLinea').textContent = data.linea;
+        document.getElementById('modalModelo').textContent = data.modelo;
+        document.getElementById('modalObservacion').textContent = data.observacion;
+        document.getElementById('modalFechaProgramada').textContent = data.fechaProgramada;
+        document.getElementById('modalFechaCreacion').textContent = data.fechaCreacion;
+        document.getElementById('modalVerCompleto').href = '/mantenimiento/' + data.id;
+        document.getElementById('mantenimientoId').value = data.id;
+
+        // Limpiar el formulario
+        document.getElementById('conclusionText').value = '';
+        clearAudio();
+
+        document.getElementById('detailModal').classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+
+        // Reinicializar iconos de Lucide en el modal
+        setTimeout(() => lucide.createIcons(), 100);
+    }
+
+    function closeModal() {
+        document.getElementById('detailModal').classList.add('hidden');
+        document.body.style.overflow = 'auto';
+
+        // Detener grabación si está activa
+        if (mediaRecorder && mediaRecorder.state === 'recording') {
+            stopRecording();
+        }
+    }
+
+    // FUNCIONES DE GRABACIÓN DE AUDIO
+    async function toggleRecording() {
+        if (mediaRecorder && mediaRecorder.state === 'recording') {
+            stopRecording();
+        } else {
+            startRecording();
+        }
+    }
+
+    async function startRecording() {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({
+                audio: true
+            });
+            mediaRecorder = new MediaRecorder(stream);
+            audioChunks = [];
+            recordingSeconds = 0;
+
+            mediaRecorder.ondataavailable = (event) => {
+                audioChunks.push(event.data);
+            };
+
+            mediaRecorder.onstop = async () => {
+                audioBlob = new Blob(audioChunks, {
+                    type: 'audio/wav'
+                });
+
+                const audioUrl = URL.createObjectURL(audioBlob);
+                const audioPlayer = document.getElementById('audioPlayer');
+                audioPlayer.src = audioUrl;
+
+                document.getElementById('audioPreview').classList.remove('hidden');
+
+                // Detener pistas
+                stream.getTracks().forEach(track => track.stop());
+
+                // Mostrar mensaje transcribiendo
+                const originalText = document.getElementById('recordBtnText').textContent;
+                document.getElementById('recordBtnText').textContent = 'Transcribiendo...';
+
+                // Enviar audio al backend
+                const formData = new FormData();
+                formData.append('audio', audioBlob, 'audio.wav');
+                const mantenimientoId = document.getElementById('mantenimientoId').value;
+                formData.append('mantenimiento_id', mantenimientoId);
+
+                try {
+                    const response = await fetch('/mecanico/transcribirAudio', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        },
+                        body: formData
+                    });
+
+                    const data = await response.json();
+
+                    if (data.text) {
+                        // Añadir lo transcrito al textarea
+                        const textarea = document.getElementById('conclusionText');
+                        textarea.value += (textarea.value ? "\n" : "") + data.text;
+                    } else {
+                        alert("Error al transcribir el audio");
+                    }
+                } catch (error) {
+                    console.error(error);
+                    alert("Error al transcribir el audio");
+                }
+
+                document.getElementById('recordBtnText').textContent = originalText;
+
+                setTimeout(() => lucide.createIcons(), 100);
+            };
+
+
+            mediaRecorder.start();
+
+            // Actualizar UI
+            document.getElementById('recordBtn').classList.remove('bg-red-600', 'hover:bg-red-700');
+            document.getElementById('recordBtn').classList.add('bg-gray-600', 'hover:bg-gray-700');
+            document.getElementById('recordBtnText').textContent = 'Detener Grabación';
+            document.getElementById('recordingIndicator').classList.remove('hidden');
+
+            // Contador de tiempo
+            recordingInterval = setInterval(() => {
+                recordingSeconds++;
+                const minutes = Math.floor(recordingSeconds / 60);
+                const seconds = recordingSeconds % 60;
+                document.getElementById('recordingTime').textContent =
+                    `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            }, 1000);
+
+        } catch (error) {
+            alert('Error al acceder al micrófono. Por favor, verifica los permisos.');
+            console.error('Error:', error);
+        }
+    }
+
+    function stopRecording() {
+        if (mediaRecorder && mediaRecorder.state === 'recording') {
+            mediaRecorder.stop();
+            clearInterval(recordingInterval);
+
+            // Restaurar UI
+            document.getElementById('recordBtn').classList.remove('bg-gray-600', 'hover:bg-gray-700');
+            document.getElementById('recordBtn').classList.add('bg-red-600', 'hover:bg-red-700');
+            document.getElementById('recordBtnText').textContent = 'Grabar Audio';
+            document.getElementById('recordingIndicator').classList.add('hidden');
+        }
+    }
+
+    function clearAudio() {
+        audioBlob = null;
+        document.getElementById('audioPlayer').src = '';
+        document.getElementById('audioPreview').classList.add('hidden');
+
+        // Si está grabando, detener
+        if (mediaRecorder && mediaRecorder.state === 'recording') {
+            stopRecording();
+        }
+    }
+
+    // GUARDAR CONCLUSIÓN
+    document.getElementById('conclusionForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const mantenimientoId = document.getElementById('mantenimientoId').value;
+        const conclusionText = document.getElementById('conclusionText').value;
+
+        if (!conclusionText.trim() && !audioBlob) {
+            alert('Por favor ingrese una conclusión por texto o audio');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('mantenimiento_id', mantenimientoId);
+        formData.append('conclusion', conclusionText);
+
+        // SOLO SE AGREGA EL AUDIO SI EXISTE
+        if (audioBlob) {
+            formData.append('audio', audioBlob, 'conclusion-audio.wav');
+        }
+
+        try {
+            const response = await fetch('/mecanico/guardar', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: formData
+            });
+
+            if (response.ok) {
+                alert('Conclusión guardada exitosamente');
+                closeModal();
+            } else {
+                alert('Error al guardar la conclusión');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error al guardar la conclusión');
+        }
+    });
+
+
+    // Cerrar modal al hacer clic fuera de él
+    document.getElementById('detailModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeModal();
+        }
+    });
+
+    // Cerrar modal con tecla ESC
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeModal();
+        }
+    });
 
     // FILTRO
     function filterMaintenances() {
