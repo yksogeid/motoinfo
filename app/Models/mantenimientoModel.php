@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Models\Estado;
+use App\Models\estadoModel;
 use App\Models\User;
 use App\Models\vehiculoModel;
 use Illuminate\Database\Eloquent\Model;
@@ -24,7 +24,7 @@ class mantenimientoModel extends Model
 
     public function estado()
     {
-        return $this->belongsTo(Estado::class, 'idEstado');
+        return $this->belongsTo(estadoModel::class, 'idEstado');
     }
 
     public function vehiculo()
