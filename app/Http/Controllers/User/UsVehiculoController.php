@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
-use App\Models\UserVehiculoModel;
+use App\Models\userVehiculoModel;
 use App\Models\User;
 use App\Models\vehiculoModel;
 use App\Models\marcaModel;
@@ -23,7 +23,7 @@ class UsVehiculoController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $userVehiculos = UserVehiculoModel::with('vehiculo')
+        $userVehiculos = userVehiculoModel::with('vehiculo')
             ->where('user_id', $user->id)
             ->get();
         $marcas = marcaModel::all();
@@ -91,7 +91,7 @@ class UsVehiculoController extends Controller
         // ✅ Asociar vehículo al usuario autenticado
         $user = Auth::user();
 
-        UserVehiculoModel::create([
+        userVehiculoModel::create([
             'user_id' => $user->id,
             'vehiculo_id' => $vehiculo->id,
             'estado' => 1,
