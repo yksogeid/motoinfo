@@ -13,21 +13,27 @@
         <div class="max-w-2xl w-full space-y-8">
             
             <!-- Logo y Header -->
-            <div class="text-center">
-                <div class="flex justify-center">
-                    <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-xl shadow-blue-500/30">
-                        <svg class="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M11,6V12.4L16,15L16.8,13.8L12.5,11.6V6H11Z"/>
-                        </svg>
+
+            <!-- Logo -->
+            <div class="text-center mb-8">
+                <a href="{{ route('dashboard') }}" class="inline-flex items-center space-x-2 group">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                        class="h-10 w-10 text-orange-600 dark:text-orange-500 group-hover:scale-110 transition-transform duration-300"
+                        fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M5 16a4 4 0 118 0m6-2a4 4 0 110 8m-3-6h3m-6-8l-4 8h2l3-6h4l1 2h3" />
+                    </svg>
+                    <div class="flex flex-col">
+                        <span class="text-3xl font-extrabold text-gray-900 dark:text-white">
+                            MOTO<span class="text-orange-600 dark:text-orange-500">INFO</span>
+                        </span>
+                        <small class="text-xs tracking-wide text-gray-500 dark:text-gray-400 uppercase">
+                            Gestión inteligente de motocicletas
+                        </small>
                     </div>
-                </div>
-                <h2 class="mt-6 text-4xl font-bold bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
-                    MotoControl
-                </h2>
-                <p class="mt-2 text-lg text-slate-300 dark:text-slate-400">
-                    Crea tu cuenta nueva
-                </p>
+                </a>
             </div>
+
 
             <!-- Formulario -->
             <div class="bg-slate-800/50 dark:bg-slate-900/50 backdrop-blur-sm border border-slate-700/50 dark:border-slate-800/50 rounded-2xl shadow-2xl p-8">

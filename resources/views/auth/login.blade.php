@@ -1,170 +1,171 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Iniciar Sesión - MotoControl</title>
+    <title>Iniciar Sesión - MotoInfo</title>
+
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet" />
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <style>
+        .fade-in {
+            opacity: 0;
+            transform: translateY(10px);
+            animation: fadeInUp .6s forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+    </style>
 </head>
-<body class="antialiased">
-    <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 to-slate-800 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 py-12 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-md w-full space-y-8">
-            
-            <!-- Logo y Header -->
-            <div class="text-center">
-                <div class="flex justify-center">
-                    <div class="w-16 h-16 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center shadow-xl shadow-orange-500/30">
-                        <svg class="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M11,6V12.4L16,15L16.8,13.8L12.5,11.6V6H11Z"/>
-                        </svg>
+
+<body class="h-full antialiased bg-gray-50 dark:bg-gray-950 transition-colors duration-500">
+
+    <div class="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+
+        <!-- Fondo degradado -->
+        <div class="absolute inset-0 bg-gradient-to-br 
+            from-gray-200 via-gray-100 to-white 
+            dark:from-gray-900 dark:via-gray-800 dark:to-black">
+        </div>
+
+        <!-- Elementos decorativos -->
+        <div class="absolute w-80 h-80 bg-orange-500/20 dark:bg-orange-600/20 blur-[150px] rounded-full -top-32 -left-20"></div>
+        <div class="absolute w-80 h-80 bg-blue-500/20 dark:bg-blue-600/20 blur-[150px] rounded-full -bottom-32 -right-20"></div>
+
+        <div class="relative w-full max-w-md space-y-8 fade-in">
+
+            <!-- Logo -->
+            <div class="text-center mb-8">
+                <a href="{{ route('dashboard') }}" class="inline-flex items-center space-x-2 group">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                        class="h-10 w-10 text-orange-600 dark:text-orange-500 group-hover:scale-110 transition-transform duration-300"
+                        fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M5 16a4 4 0 118 0m6-2a4 4 0 110 8m-3-6h3m-6-8l-4 8h2l3-6h4l1 2h3" />
+                    </svg>
+                    <div class="flex flex-col">
+                        <span class="text-3xl font-extrabold text-gray-900 dark:text-white">
+                            MOTO<span class="text-orange-600 dark:text-orange-500">INFO</span>
+                        </span>
+                        <small class="text-xs tracking-wide text-gray-500 dark:text-gray-400 uppercase">
+                            Gestión inteligente de motocicletas
+                        </small>
                     </div>
-                </div>
-                <h2 class="mt-6 text-4xl font-bold bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent">
-                    MotoControl
-                </h2>
-                <p class="mt-2 text-lg text-slate-300 dark:text-slate-400">
-                    Inicia sesión en tu cuenta
-                </p>
+                </a>
             </div>
 
             <!-- Formulario -->
-            <div class="bg-slate-800/50 dark:bg-slate-900/50 backdrop-blur-sm border border-slate-700/50 dark:border-slate-800/50 rounded-2xl shadow-2xl p-8">
-                
-                <!-- Session Status -->
+            <div class="backdrop-blur-xl bg-white/60 dark:bg-white/5 
+                border border-gray-200 dark:border-white/10 
+                rounded-2xl p-8 shadow-xl transition-all duration-500">
+
                 @if (session('status'))
-                    <div class="mb-4 font-medium text-sm text-green-400">
-                        {{ session('status') }}
-                    </div>
+                <div class="mb-4 text-green-500 dark:text-green-400 text-sm">
+                    {{ session('status') }}
+                </div>
                 @endif
 
                 <form method="POST" action="{{ route('login') }}" class="space-y-6">
                     @csrf
 
-                    <!-- Email Address -->
+                    <!-- Email -->
                     <div>
-                        <label for="email" class="block text-sm font-semibold text-slate-200 dark:text-slate-300 mb-2">
-                            Correo Electrónico
-                        </label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <svg class="h-5 w-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"/>
-                                </svg>
-                            </div>
-                            <input 
-                                id="email" 
-                                type="email" 
-                                name="email" 
-                                value="{{ old('email') }}"
-                                required 
-                                autofocus 
-                                autocomplete="username"
-                                class="block w-full pl-10 pr-3 py-3 bg-slate-700/50 dark:bg-slate-800/50 border border-slate-600 dark:border-slate-700 text-slate-100 placeholder-slate-400 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-300"
-                                placeholder="tu@email.com"
-                            />
-                        </div>
-                        @error('email')
-                            <p class="mt-2 text-sm text-red-400">{{ $message }}</p>
-                        @enderror
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Correo electrónico</label>
+                        <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus
+                            class="block w-full pl-10 pr-3 py-3
+           bg-slate-100 dark:bg-slate-800
+           border border-slate-300 dark:border-slate-700
+           text-gray-900 dark:text-gray-100
+           placeholder-gray-500 dark:placeholder-gray-400
+           tracking-widest
+           caret-orange-500
+           rounded-xl
+           focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent
+           transition-all duration-300"
+                            placeholder="usuario@motoinfo.com">
                     </div>
 
                     <!-- Password -->
-                    <div>
-                        <label for="password" class="block text-sm font-semibold text-slate-200 dark:text-slate-300 mb-2">
-                            Contraseña
-                        </label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <svg class="h-5 w-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-                                </svg>
-                            </div>
-                            <input 
-                                id="password" 
-                                type="password" 
-                                name="password" 
-                                required 
-                                autocomplete="current-password"
-                                class="block w-full pl-10 pr-3 py-3 bg-slate-700/50 dark:bg-slate-800/50 border border-slate-600 dark:border-slate-700 text-slate-100 placeholder-slate-400 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-300"
-                                placeholder="••••••••"
-                            />
-                        </div>
-                        @error('password')
-                            <p class="mt-2 text-sm text-red-400">{{ $message }}</p>
-                        @enderror
-                    </div>
+                    <input
+                        id="password"
+                        type="password"
+                        name="password"
+                        required
+                        autocomplete="current-password"
+                        class="block w-full pl-10 pr-3 py-3
+           bg-slate-100 dark:bg-slate-800
+           border border-slate-300 dark:border-slate-700
+           text-gray-900 dark:text-gray-100
+           placeholder-gray-500 dark:placeholder-gray-400
+           tracking-widest
+           caret-orange-500
+           rounded-xl
+           focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent
+           transition-all duration-300"
+                        placeholder="••••••••" />
 
-                    <!-- Remember Me y Forgot Password -->
-                    <div class="flex items-center justify-between">
-                        <label for="remember_me" class="flex items-center group cursor-pointer">
-                            <input 
-                                id="remember_me" 
-                                type="checkbox" 
-                                name="remember"
-                                class="w-4 h-4 rounded border-slate-600 bg-slate-700/50 text-orange-500 focus:ring-2 focus:ring-orange-500 focus:ring-offset-0 transition-all duration-300"
-                            >
-                            <span class="ml-2 text-sm text-slate-300 dark:text-slate-400 group-hover:text-slate-200 transition-colors duration-300">
-                                Recordarme
-                            </span>
+
+                    <!-- Opciones -->
+                    <div class="flex items-center justify-between text-sm">
+                        <label class="flex items-center space-x-2 text-gray-600 dark:text-gray-400 cursor-pointer">
+                            <input type="checkbox" name="remember" class="accent-orange-500 w-4 h-4">
+                            <span>Recordarme</span>
                         </label>
 
                         @if (Route::has('password.request'))
-                            <a 
-                                href="{{ route('password.request') }}" 
-                                class="text-sm font-medium text-orange-400 hover:text-orange-300 transition-colors duration-300"
-                            >
-                                ¿Olvidaste tu contraseña?
-                            </a>
+                        <a href="{{ route('password.request') }}"
+                            class="text-orange-600 hover:underline hover:text-orange-700 
+                                      dark:text-orange-400 dark:hover:text-orange-300">
+                            ¿Olvidaste tu contraseña?
+                        </a>
                         @endif
                     </div>
 
-                    <!-- Submit Button -->
-                    <div>
-                        <button 
-                            type="submit"
-                            class="w-full flex justify-center items-center px-6 py-3 text-base font-semibold text-white bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 rounded-xl shadow-lg shadow-orange-500/30 hover:shadow-orange-500/50 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-slate-900 transition-all duration-300 hover:-translate-y-0.5"
-                        >
-                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
-                            </svg>
-                            Iniciar Sesión
-                        </button>
-                    </div>
-
-                    <!-- Register Link -->
-                    @if (Route::has('register'))
-                        <div class="text-center pt-4 border-t border-slate-700/50 dark:border-slate-800/50">
-                            <p class="text-sm text-slate-400 dark:text-slate-500">
-                                ¿No tienes una cuenta?
-                                <a 
-                                    href="{{ route('register') }}" 
-                                    class="font-semibold text-orange-400 hover:text-orange-300 transition-colors duration-300 ml-1"
-                                >
-                                    Regístrate aquí
-                                </a>
-                            </p>
-                        </div>
-                    @endif
+                    <!-- Botón -->
+                    <button type="submit"
+                        class="w-full px-6 py-3 rounded-xl font-semibold text-lg text-white
+                               bg-gradient-to-r from-orange-500 to-orange-600
+                               hover:from-orange-600 hover:to-orange-700
+                               shadow-lg hover:shadow-orange-500/40 
+                               transform transition-all duration-300 hover:-translate-y-0.5">
+                        Acceder
+                    </button>
 
                 </form>
+
+                @if (Route::has('register'))
+                <div class="text-center pt-4">
+                    <p class="text-sm text-gray-600 dark:text-gray-400">
+                        ¿No tienes cuenta?
+                        <a href="{{ route('register') }}"
+                            class="text-orange-600 hover:underline hover:text-orange-700
+                                      dark:text-orange-400 dark:hover:text-orange-300">
+                            Regístrate
+                        </a>
+                    </p>
+                </div>
+                @endif
             </div>
 
-            <!-- Back to Home -->
+            <!-- Volver -->
             <div class="text-center">
-                <a 
-                    href="{{ url('/') }}" 
-                    class="inline-flex items-center text-sm font-medium text-slate-400 hover:text-slate-300 transition-colors duration-300"
-                >
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                    </svg>
-                    Volver al inicio
+                <a href="{{ url('/') }}"
+                    class="text-sm text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition">
+                    ← Volver al inicio
                 </a>
             </div>
-
         </div>
     </div>
+
 </body>
+
 </html>
