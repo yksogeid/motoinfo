@@ -5,7 +5,7 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\UserVehiculoModel;
+use App\Models\userVehiculoModel;
 use App\Models\marcaModel;
 use App\Models\lineaComercialModel;
 use App\Models\colorModel;
@@ -16,7 +16,7 @@ class DashboardController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $userVehiculos = UserVehiculoModel::with('vehiculo')
+        $userVehiculos = userVehiculoModel::with('vehiculo')
             ->where('user_id', $user->id)
             ->get();
         $totalVehiculos = $userVehiculos->count();
