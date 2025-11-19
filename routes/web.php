@@ -164,7 +164,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->group(function () {
 
         Route::get('/dashboard', [UserDashboard::class, 'index'])->name('user.dashboard');
-        Route::get('/motos', [UserMoto::class, 'index'])->name('user.motos');
+       // Route::get('/motos', [UserMoto::class, 'index'])->name('user.motos');
 
         Route::get('/dashboard/crearVehiculo', [UserVehiculoController::class, 'create'])->name('vehiculos.create');
         Route::post('/vehiculo/{idVehiculo}/documentos/subir', [DocumentoVehiculoController::class, 'subir'])->name('documentos.subir');
