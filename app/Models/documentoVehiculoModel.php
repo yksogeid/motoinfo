@@ -34,7 +34,7 @@ class documentoVehiculoModel extends Model
 
     public function tipo_documento()
     {
-        return $this->belongsTo(tipodocumentoModel::class, "tipo_documento_id");
+        return $this->belongsTo(tipoDocumentoModel::class, "tipo_documento_id");
     }
 
     public function estado_validacion()
