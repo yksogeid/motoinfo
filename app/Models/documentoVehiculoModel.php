@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 use App\Models\vehiculoModel;
-use App\Models\tipodocumentoModel;
+use App\Models\tipoDocumentoModel;
 use App\Models\estadoModel;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
